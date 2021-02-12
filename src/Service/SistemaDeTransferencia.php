@@ -36,7 +36,7 @@ class SistemaDeTransferencia
         return $this->juros->doc($valorDaTransferencia);
     }
 
-    public function pix(float $valorDaTransferencia, Transferencia $contaDestino)
+    public function pix(float $valorDaTransferencia, Transferencia $contaDestino): void
     {
         $contaDestino->depositar($valorDaTransferencia);
     }

@@ -10,7 +10,7 @@ class CalculaTaxas
             return $valorTed * 0.0010;
         }
 
-        return $valorTed * 0.1;
+        return $valorTed * 0.003;
     }
 
     public function doc(float $valorDoc): float
@@ -19,6 +19,6 @@ class CalculaTaxas
             return $valorDoc * 0.0015;
         }
 
-        return $valorDoc * 0.2;
+        return $valorDoc * 0.002;
     }
 }

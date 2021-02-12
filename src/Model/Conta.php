@@ -18,8 +18,16 @@ abstract class Conta implements Transferencia
         $this->agencia = $agencia;
         $this->conta = $conta;
     }
-
     abstract public function depositar(float $valorDoDeposito): void;
     abstract public function sacar(float $valorDoSaque): string;
 
+    public function mostrarAgencia(): string
+    {
+        return $this->agencia;
+    }
+
+    public function mostrarConta(): string
+    {
+        return $this->conta;
+    }
 }

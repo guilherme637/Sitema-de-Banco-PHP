@@ -3,7 +3,7 @@
 use Banco\Model\ContaCorrente;
 use Banco\Model\ContaPoupanca;
 
-require_once  'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 $joao = new ContaCorrente('1234', '123456');
 $maria = new ContaPoupanca('4321', '543216');

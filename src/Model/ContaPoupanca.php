@@ -23,16 +23,6 @@ class ContaPoupanca extends Conta implements Transferencia
         $this->extrato = new Extrato;
     }
 
-    private function calcularSaldoSaque(float $valorDoCalculo): float
-    {
-        return $this->saldo -= $valorDoCalculo;
-    }
-
-    private function calcularSaldoDeposito(float $valorDoCalculo):float
-    {
-        return $this->saldo += $valorDoCalculo;
-    }
-
     public function saldo(): float
     {
         return $this->saldo;
@@ -45,12 +35,12 @@ class ContaPoupanca extends Conta implements Transferencia
         }
 
         $this->extrato->movimentacao($valorDoDeposito, 'Deposito');
-        $this->calcularSaldoDeposito($valorDoDeposito);
+        $this->saldo += $valorDoDeposito;
     }
 
     public function sacar(float $valorDoSaque): string
     {
-        $saque = $this->calcularSaldoSaque($valorDoSaque);
+        $saque = $this->saldo -=  $valorDoSaque;
         $this->extrato->movimentacao($valorDoSaque, 'Saque');
 
         if ($saque <= 0) {
@@ -66,19 +56,19 @@ class ContaPoupanca extends Conta implements Transferencia
             case 'ted':
                 $jurosTed = $this->sistemaDeTransferencia->ted($valorDaTransferencia, $contaDestino);
                 $this->extrato->movimentacao($valorDaTransferencia, 'Transferência por TED');
-                $this->calcularSaldoSaque($jurosTed);
+                $this->saldo -= $jurosTed;
                 break;
 
             case 'doc':
                 $jurosDoc = $this->sistemaDeTransferencia->doc($valorDaTransferencia, $contaDestino);
                 $this->extrato->movimentacao($valorDaTransferencia, 'Transferência por DOC');
-                $this->calcularSaldoSaque($jurosDoc);
+                $this->saldo -= $jurosDoc;
                 break;
 
             default:
                 $jurosTed = $this->sistemaDeTransferencia->ted($valorDaTransferencia, $contaDestino);
                 $this->extrato->movimentacao($valorDaTransferencia, 'Transferência por TED');
-                $this->calcularSaldoSaque($jurosTed);
+                $this->saldo -= $jurosTed;
         }
     }
 

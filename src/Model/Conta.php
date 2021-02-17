@@ -4,10 +4,11 @@ namespace Banco\Model;
 
 use Banco\Interface\Transferencia;
 
-abstract class Conta implements Transferencia
+abstract class Conta
 {
     private string $agencia;
     private string $conta;
+    protected float $saldo;
 
     public function __construct(string $agencia, string $conta)
     {
@@ -17,7 +18,9 @@ abstract class Conta implements Transferencia
 
         $this->agencia = $agencia;
         $this->conta = $conta;
+        $this->saldo = 0;
     }
     abstract public function depositar(float $valorDoDeposito): void;
     abstract public function sacar(float $valorDoSaque): string;
+    abstract public function transferir(float $valorDaTransferencia, Conta $contaDestino, Transferencia $tipo): void;
 }

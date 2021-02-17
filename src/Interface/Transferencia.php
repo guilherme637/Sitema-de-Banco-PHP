@@ -2,7 +2,9 @@
 
 namespace Banco\Interface;
 
+use Banco\Model\Conta;
+
 interface Transferencia
 {
-    public function transferir(float $valorDaTransferencia, Transferencia $contaDestino, string $tipo = null): void;
+    public function transferencia(float $valorDaTransferencia, Conta $contaDestino): float;
 }

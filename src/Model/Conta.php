@@ -2,7 +2,7 @@
 
 namespace Banco\Model;
 
-use Banco\Interface\Transferencia;
+use Banco\Service\Transferencia;
 
 abstract class Conta
 {
@@ -20,7 +20,10 @@ abstract class Conta
         $this->conta = $conta;
         $this->saldo = 0;
     }
+
     abstract public function depositar(float $valorDoDeposito): void;
+
     abstract public function sacar(float $valorDoSaque): string;
+
     abstract public function transferir(float $valorDaTransferencia, Conta $contaDestino, Transferencia $tipo): void;
 }

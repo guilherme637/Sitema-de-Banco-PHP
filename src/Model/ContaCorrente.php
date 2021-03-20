@@ -2,31 +2,35 @@
 
 namespace Banco\Model;
 
-use Banco\Interface\Transferencia;
 use Banco\Service\Extrato;
-use Banco\Service\SistemaDeTransferencia;
+use Banco\Service\SistemaTransferencia;
+use Banco\Service\Transferencia;
 use InvalidArgumentException;
 
 class ContaCorrente extends Conta
 {
     private Extrato $extrato;
-    private SistemaDeTransferencia $sistemaDeTransferencia;
+    private SistemaTransferencia $sistemaTransferencia;
 
-    public function __construct(int $agencia, int $conta)
-    {
+    public function __construct(
+        string $agencia,
+        string $conta,
+        Extrato $extrato,
+        SistemaTransferencia $sistemaTransferencia
+    ) {
         parent::__construct($agencia, $conta);
-
-        $this->sistemaDeTransferencia = new SistemaDeTransferencia;
-        $this->extrato = new Extrato;
+        $this->extrato = $extrato;
+        $this->sistemaTransferencia = $sistemaTransferencia;
     }
 
     public function depositar(float $valorDoDeposito): void
     {
-        if ($valorDoDeposito == 0) {
+        if ($valorDoDeposito === 0) {
             throw new InvalidArgumentException('Operação não permitida');
         }
 
         $this->extrato->movimentacao($valorDoDeposito, 'Deposito');
+
         $this->saldo += $valorDoDeposito;
     }
 
@@ -37,7 +41,8 @@ class ContaCorrente extends Conta
         }
 
         $this->extrato->movimentacao($valorDoSaque * -1, 'Saque');
-        $this->saldo -=  $valorDoSaque;
+
+        $this->saldo -= $valorDoSaque;
 
         return 'Saldo em conta: ' . $this->saldo;
     }
@@ -49,9 +54,15 @@ class ContaCorrente extends Conta
 
     public function transferir(float $valorDaTransferencia, Conta $contaDestino, Transferencia $tipo): void
     {
-        $juros = $tipo->transferencia($valorDaTransferencia, $contaDestino);
-        $this->extrato->movimentacao($valorDaTransferencia,'Transferencia');
-        $this->saldo -= $juros;
+        $transferido = $this->sistemaTransferencia->solicitarTransferencia(
+            $valorDaTransferencia,
+            $contaDestino,
+            $tipo,
+            $this->saldo,
+            $this->extrato
+        );
+
+        $this->saldo = $transferido;
     }
 
     public function extrato(): void

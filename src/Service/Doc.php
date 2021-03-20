@@ -2,7 +2,6 @@
 
 namespace Banco\Service;
 
-use Banco\Interface\Transferencia;
 use Banco\Model\Conta;
 
 class Doc implements Transferencia
@@ -13,9 +12,9 @@ class Doc implements Transferencia
         if ($valorDaTransferencia >= 10000) {
             $contaDestino->depositar($valorDaTransferencia);
 
-            return $valorDaTransferencia * 0.0015;
+            return $valorDaTransferencia * 0.015;
         }
 
-        return $valorDaTransferencia * 0.002;
+        return $valorDaTransferencia * 0.02;
     }
 }

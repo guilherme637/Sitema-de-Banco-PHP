@@ -1,10 +1,7 @@
 <?php
 
-
 namespace Banco\Service;
 
-
-use Banco\Interface\Transferencia;
 use Banco\Model\Conta;
 
 class Ted implements Transferencia

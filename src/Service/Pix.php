@@ -2,7 +2,6 @@
 
 namespace Banco\Service;
 
-use Banco\Interface\Transferencia;
 use Banco\Model\Conta;
 
 class Pix implements Transferencia

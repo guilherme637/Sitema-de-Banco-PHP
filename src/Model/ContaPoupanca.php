@@ -2,25 +2,28 @@
 
 namespace Banco\Model;
 
-use Banco\Interface\Transferencia;
+use Banco\Service\Transferencia;
 use Banco\Service\Extrato;
-use Banco\Service\SistemaDeTransferencia;
+use Banco\Service\SistemaTransferencia;
 use DomainException;
 use InvalidArgumentException;
 
-class ContaPoupanca extends Conta implements Transferencia
+class ContaPoupanca extends Conta
 {
-    private float $saldo;
     private Extrato $extrato;
-    private SistemaDeTransferencia $sistemaDeTransferencia;
+    private SistemaTransferencia $sistemaTransferencia;
 
-    public function __construct(string $agencia, string $conta)
-    {
+    public function __construct(
+        string $agencia,
+        string $conta,
+        Extrato $extrato,
+        SistemaTransferencia $sistemaTransferencia
+    ) {
         parent::__construct($agencia, $conta);
 
         $this->saldo = 50;
-        $this->sistemaDeTransferencia = new SistemaDeTransferencia;
-        $this->extrato = new Extrato;
+        $this->extrato = $extrato;
+        $this->sistemaTransferencia = $sistemaTransferencia;
     }
 
     public function saldo(): float
@@ -40,7 +43,8 @@ class ContaPoupanca extends Conta implements Transferencia
 
     public function sacar(float $valorDoSaque): string
     {
-        $saque = $this->saldo -=  $valorDoSaque;
+        $saque = $this->saldo -= $valorDoSaque;
+
         $this->extrato->movimentacao($valorDoSaque, 'Saque');
 
         if ($saque <= 0) {
@@ -50,30 +54,23 @@ class ContaPoupanca extends Conta implements Transferencia
         return 'Saldo em conta: ' . $this->saldo;
     }
 
-    public function transferir(float $valorDaTransferencia, Transferencia $contaDestino, string $tipo = null): void
+
+    public function transferir(float $valorDaTransferencia, Conta $contaDestino, Transferencia $tipo): void
     {
-        switch ($tipo) {
-            case 'ted':
-                $jurosTed = $this->sistemaDeTransferencia->ted($valorDaTransferencia, $contaDestino);
-                $this->extrato->movimentacao($valorDaTransferencia, 'Transferência por TED');
-                $this->saldo -= $jurosTed;
-                break;
-
-            case 'doc':
-                $jurosDoc = $this->sistemaDeTransferencia->doc($valorDaTransferencia, $contaDestino);
-                $this->extrato->movimentacao($valorDaTransferencia, 'Transferência por DOC');
-                $this->saldo -= $jurosDoc;
-                break;
-
-            default:
-                $jurosTed = $this->sistemaDeTransferencia->ted($valorDaTransferencia, $contaDestino);
-                $this->extrato->movimentacao($valorDaTransferencia, 'Transferência por TED');
-                $this->saldo -= $jurosTed;
-        }
+        $transferido = $this->sistemaTransferencia->solicitarTransferencia(
+            $valorDaTransferencia,
+            $contaDestino,
+            $tipo,
+            $this->saldo,
+            $this->extrato
+        );
+            
+        $this->saldo = $transferido;
     }
 
     public function extrato(): void
     {
         $this->extrato->mostrarExtrato();
     }
+
 }

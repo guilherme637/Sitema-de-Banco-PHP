@@ -1,6 +1,6 @@
 <?php
 
-namespace Banco\Interface;
+namespace Banco\Service;
 
 use Banco\Model\Conta;
 

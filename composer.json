@@ -1,7 +1,17 @@
 {
+  "name": "vendor_name/estudo",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "guilherme",
+      "email": "email@example.com"
+    }
+  ],
   "autoload": {
     "psr-4": {
-      "Banco\\": "src/"
+      "Banco\\" : "src"
     }
   }
 }
